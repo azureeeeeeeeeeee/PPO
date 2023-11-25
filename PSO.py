@@ -6,7 +6,7 @@ import random
 def f(x):
     return 3 * np.exp(x**3) - 2*x
 
-all_x = {f'x{i}': random.random() for i in range(1, 11)}
+all_x = {f'x{i}': random.randint(1, 10) for i in range(1, 11)}
 all_v = {f'v{i}': 0 for i in range(1, 11)}
 pbest = {f'x{i}': None for i in range(1, 11)}
 temp = {f'x{i}': None for i in range(1, 11)}
@@ -26,7 +26,7 @@ def updatePBest(temp=temp, pbest=pbest):
 
     for key in pbest:
         if pbest[key] is None or temp[key] <= pbest[key]:
-            pbest[key] = temp[key]
+            pbest[key] = all_x[key]
 
 def updateGBest():
     global gbest
@@ -48,11 +48,15 @@ def updateX(all_x=all_x):
 for i in range(1, 4):
     print(f'iterasi {i}')
 
-    print('\nNilai X')
+    print('Nilai X')
     for key, value in all_x.items():
         print(f'{key} : {value}')
 
-    print('\nPBest i')
+    print('\nNilai f(x)')
+    for key, value in all_x.items():
+        print(f'{key} : {f(value)}')
+
+    print('\nNilai PBest')
     updatePBest()
     for key, value in pbest.items():
         print(f'{key} : {value}')
@@ -61,8 +65,11 @@ for i in range(1, 4):
     print(f'\nGbest : {gbest}')
     updateV()
 
+    print('\nNilai V')
     for key, value in all_v.items():
         print(f'{key} : {value}')
+
+    print('\nUpdate X dengan\nxi = xi + vi')
 
     print('\n\n')
     updateX()
