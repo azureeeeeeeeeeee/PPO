@@ -1,15 +1,16 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 # Fungsi Minimum
 def f(x):
     return 3 * np.exp(x**3) - 2*x
 
 # Inisiasi partikel, kecepatan, dan pbest
-all_x = {f'x{i}': random.randint(1, 10) for i in range(1, 11)}
-all_v = {f'v{i}': 0 for i in range(1, 11)}
-pbest = {f'x{i}': None for i in range(1, 11)}
-temp = {f'x{i}': None for i in range(1, 11)}
+all_x = {f'x{i}': random.randint(0, 3) for i in range(3)}
+all_v = {f'v{i}': 0 for i in range(3)}
+pbest = {f'x{i}': None for i in range(3)}
+temp = {f'x{i}': None for i in range(3)}
 
 
 # Variabel
@@ -17,12 +18,11 @@ c1 = 0.5
 c2 = 1
 w = 1
 gbest = None
-isConvergen = False
-
+gbest_value = []
+ite = []
 
 # Fungsi update PBest
 def updatePBest(temp=temp, pbest=pbest):
-    global all_gbest_value
     for key, value in all_x.items():
         temp[key] = f(value)
 
@@ -33,12 +33,7 @@ def updatePBest(temp=temp, pbest=pbest):
 # Update GBest
 def updateGBest():
     global gbest
-    global isConvergen
-    temp_gbest = all_x[min(pbest, key=lambda k: pbest[k])]
-    if temp_gbest == gbest:
-        isConvergen = True
-    else:
-        gbest = temp_gbest
+    gbest = all_x[min(pbest, key=lambda k: pbest[k])]
 
 # Update V
 def updateV(v=all_v):
@@ -57,15 +52,15 @@ def updateX(all_x=all_x):
 # Memulai Perhitungan
 iters = int(input('Masukkan Jumlah Iterasi : '))
 for i in range(1, iters+1):
-    print(f'iterasi {i}')
+    print(f'\niterasi {i}')
 
     print('Nilai X')
     for key, value in all_x.items():
         print(f'{key} : {value}')
 
-    print('\nNilai f(x)')
+    print('\nNilai f(xi)')
     for key, value in all_x.items():
-        print(f'{key} : {f(value)}')
+        print(f'f({key}) : {f(value)}')
 
     print('\nNilai PBest')
     updatePBest()
@@ -74,16 +69,19 @@ for i in range(1, iters+1):
 
     updateGBest()
     print(f'\nGbest : {gbest}')
-    if isConvergen:
-        print('\nFungsi telah konvergen')
-        break
+    print(f'\nNilai f(x) menggunakan GBest : \n{f(gbest)}')
+    gbest_value.append(f(gbest))
     updateV()
 
     print('\nNilai V')
     for key, value in all_v.items():
         print(f'{key} : {value}')
 
-    print('\nUpdate X dengan\nxi = xi + vi')
-
-    print('\n\n')
+    print('\n')
     updateX()
+    ite.append(i)
+
+plt.plot(ite, gbest_value)
+plt.xlabel('Iterasi')
+plt.ylabel('f(x) dengan GBest')
+plt.show()
