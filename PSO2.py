@@ -15,8 +15,7 @@ c1 = 1
 c2 = 0.5
 w = 1
 gbest = None
-all_gbest_value = []
-iters = []
+isConvergen = False
 
 # Mencari PBest untuk setiap x
 def updatePBest(all_xy=all_xy, temp=temp, pbest=pbest):
@@ -28,12 +27,15 @@ def updatePBest(all_xy=all_xy, temp=temp, pbest=pbest):
     for key, value in temp.items():
         if pbest[key] is None or temp[key] < pbest[key]:
             pbest[key] = temp[key]
-    
-    all_gbest_value.append(min(temp.values()))
 
 def updateGBest(all_xy=all_xy):
     global gbest
-    gbest = all_xy[min(pbest, key=lambda k: pbest[k])]
+    global isConvergen
+    temp_gbest = all_xy[min(pbest, key=lambda k: pbest[k])]
+    if gbest == temp_gbest:
+        isConvergen = True
+    else:
+        gbest = temp_gbest
 
 def updateV(all_v=all_v, all_xy=all_xy, w=w, c1=c1, c2=c2):
     for key in all_v:
@@ -66,7 +68,7 @@ for i in range(1, iterasi+1):
     for key, value in all_xy.items():
         print(f"{key} : ({value['x']}, {value['y']})")
 
-    print('\nNilai f(x, y')
+    print('\nNilai f(x, y)')
     for key, value in all_xy.items():
         print(f"{key} : {f(value['x'], value['y'])}")
 
@@ -77,6 +79,9 @@ for i in range(1, iterasi+1):
 
     updateGBest()
     print(f"\nGbest : ({gbest['x']}, {gbest['y']})")
+    if isConvergen:
+        print('\nFungsi sudah convergen')
+        break
 
     print('\nNilai V')
     updateV()
@@ -87,10 +92,3 @@ for i in range(1, iterasi+1):
 
     print('\n\n')
     updateX()
-
-    iters.append(i)
-
-plt.plot(iters, all_gbest_value)
-plt.ylabel('Value of F(x, y) using gbest')
-plt.xlabel('Iterations')
-plt.show()
